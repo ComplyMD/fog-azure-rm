@@ -23,7 +23,7 @@ module Fog
             else
               data = Fog::Storage.parse_data(body)
               options[:content_length] = data[:headers]['Content-Length']
-              options[:content_type] = data[:headers]['Content-Type']
+              options[:content_type] ||= data[:headers]['Content-Type']
               data = data[:body]
             end
 
