@@ -12,6 +12,7 @@ module Fog
       # Recognizes when creating data client
       recognizes :azure_storage_account_name
       recognizes :azure_storage_access_key
+      recognizes :retry_filter
       recognizes :debug
 
       request_path 'fog/azurerm/requests/storage'
@@ -126,7 +127,7 @@ module Fog
                                                        storage_access_key: @azure_storage_access_key)
           azure_client.storage_blob_host = get_blob_endpoint(@azure_storage_account_name, true, @environment)
           @blob_client = azure_client.blob_client
-          @blob_client.with_filter(Azure::Storage::Core::Filter::ExponentialRetryPolicyFilter.new)
+          @blob_client.with_filter(options[:retry_filter] || Azure::Storage::Core::Filter::ExponentialRetryPolicyFilter.new)
           @blob_client.with_filter(Azure::Core::Http::DebugFilter.new) if @debug
           @signature_client = Azure::Storage::Core::Auth::SharedAccessSignature.new(@azure_storage_account_name,
                                                                                     @azure_storage_access_key)
